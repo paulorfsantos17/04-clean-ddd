@@ -1,4 +1,4 @@
-import { randomUUID } from "node:crypto"
+import { randomUUID } from 'node:crypto'
 
 interface AnswerProps {
   content: string
@@ -18,5 +18,4 @@ export class Answer {
     this.authorId = props.authorId
     this.questionId = props.questionId
   }
-
 }

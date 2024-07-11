@@ -1,6 +1,6 @@
-import { randomUUID } from "node:crypto"
+import { randomUUID } from 'node:crypto'
 
-class Student {
+export class Student {
   public id: string
   public name: string
 
@@ -8,4 +8,4 @@ class Student {
     this.id = id ?? randomUUID()
     this.name = name
   }
-} 
+}

@@ -1,7 +1,7 @@
 import { Slug } from './value-objecs/slug'
-import { Entity } from '../../core/entities/entity'
-import { UniqueEntityId } from '../../core/entities/unique-entity-id'
-import { Optional } from '../../types/optional'
+import { Entity } from '@/core/entities/entity'
+import { UniqueEntityId } from '@/core/entities/unique-entity-id'
+import { Optional } from '@/types/optional'
 
 interface QuestionProps {
   authorId: UniqueEntityId

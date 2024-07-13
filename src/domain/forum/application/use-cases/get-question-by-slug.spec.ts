@@ -25,4 +25,12 @@ describe('Get Question By Slug', () => {
 
     expect(inMemoryQuestionsRepository.items[0].slug).toEqual(question.slug)
   })
+
+  it('should not be able to find a question that not exist', async () => {
+    await expect(() =>
+      sut.execute({
+        slug: 'question-not-exist',
+      }),
+    ).rejects.toBeInstanceOf(Error)
+  })
 })

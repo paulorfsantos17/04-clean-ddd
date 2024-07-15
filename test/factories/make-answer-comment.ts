@@ -7,7 +7,7 @@ import { faker } from '@faker-js/faker'
 
 export function makeAnswerComment(
   override: Partial<AnswerCommentProps> = {},
-  id: UniqueEntityId,
+  id?: UniqueEntityId,
 ) {
   return AnswerComment.create(
     {

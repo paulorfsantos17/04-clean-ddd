@@ -37,4 +37,14 @@ describe('Answer on Question', () => {
     )
     expect(inMemoryAnswerCommentsRepository.items[0].id).toBeTruthy()
   })
+
+  it('should not be able to create comment with answer not exist', async () => {
+    await expect(() =>
+      sut.execute({
+        answerId: 'answer-comment-1',
+        authorId: 'author-2',
+        content: 'content test',
+      }),
+    ).rejects.toBeInstanceOf(Error)
+  })
 })

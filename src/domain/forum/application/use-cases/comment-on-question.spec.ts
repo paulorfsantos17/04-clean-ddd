@@ -38,4 +38,14 @@ describe('Comment on Question', () => {
     ).toBe('author-1')
     expect(inMemoryQuestionCommentsRepository.items[0].id).toBeTruthy()
   })
+
+  it('should not be able to create comment with comment not exist', async () => {
+    await expect(() =>
+      sut.execute({
+        questionId: 'question-comment-1',
+        authorId: 'author-2',
+        content: 'content test',
+      }),
+    ).rejects.toBeInstanceOf(Error)
+  })
 })

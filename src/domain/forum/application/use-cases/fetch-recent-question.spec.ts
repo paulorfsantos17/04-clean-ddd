@@ -30,10 +30,6 @@ describe('Fetch Recent Questions', () => {
       expect.objectContaining({ createdAt: new Date(2022, 0, 18) }),
     ])
   })
-  beforeEach(() => {
-    inMemoryQuestionsRepository = new InMemoryQuestionsRepository()
-    sut = new FetchRecentQuestionUseCase(inMemoryQuestionsRepository)
-  })
 
   it('should be able to fetch paginated recent questions', async () => {
     for (let i = 1; i <= 22; i++) {

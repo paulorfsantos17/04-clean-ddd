@@ -1,10 +1,16 @@
+import { Either, left, right } from '@/core/either'
 import { AnswerCommentRepository } from '../repositories/answer-comments-repository '
+import { ResourceNotFoundError } from './errors/resource-not-found-error'
+import { NotAllowedError } from './errors/not-allowed-error'
 
 interface DeleteAnswerCommentUseCaseRequest {
   authorId: string
   answerCommentId: string
 }
-type DeleteAnswerCommentUseCaseResponse = Promise<void>
+type DeleteAnswerCommentUseCaseResponse = Either<
+  ResourceNotFoundError | NotAllowedError,
+  object
+>
 
 export class DeleteAnswerCommentUseCase {
   constructor(private answerCommentRepository: AnswerCommentRepository) {
@@ -19,13 +25,15 @@ export class DeleteAnswerCommentUseCase {
       await this.answerCommentRepository.findById(answerCommentId)
 
     if (!answerComment) {
-      throw new Error('Answer comment not found')
+      return left(new ResourceNotFoundError())
     }
 
     if (answerComment?.authorId.toString() !== authorId) {
-      throw new Error('Unauthorized to delete this comment')
+      return left(new NotAllowedError())
     }
 
     await this.answerCommentRepository.delete(answerComment)
+
+    return right({})
   }
 }

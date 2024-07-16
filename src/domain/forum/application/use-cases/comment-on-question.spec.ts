@@ -2,6 +2,7 @@ import { InMemoryQuestionsRepository } from 'test/repositories/in-memory-questio
 import { makeQuestion } from 'test/factories/make-question'
 import { InMemoryQuestionCommentsRepository } from 'test/repositories/in-memory-question-comments-repository'
 import { CommentOnQuestionUseCase } from './comment-on-question'
+import { ResourceNotFoundError } from './errors/resource-not-found-error'
 
 let inMemoryQuestionsRepository: InMemoryQuestionsRepository
 let inMemoryQuestionCommentsRepository: InMemoryQuestionCommentsRepository
@@ -40,12 +41,13 @@ describe('Comment on Question', () => {
   })
 
   it('should not be able to create comment with comment not exist', async () => {
-    await expect(() =>
-      sut.execute({
-        questionId: 'question-comment-1',
-        authorId: 'author-2',
-        content: 'content test',
-      }),
-    ).rejects.toBeInstanceOf(Error)
+    const result = await sut.execute({
+      questionId: 'question-comment-1',
+      authorId: 'author-2',
+      content: 'content test',
+    })
+
+    expect(result.isLeft()).toBeTruthy()
+    expect(result.value).toBeInstanceOf(ResourceNotFoundError)
   })
 })

@@ -5,6 +5,15 @@ export class InMemoryQuestionAttachmentsRepository
   // eslint-disable-next-line prettier/prettier
   implements QuestionAttachmentsRepository {
   public items: QuestionAttachment[] = []
+
+  async deleteManyByQuestionId(questionId: string): Promise<void> {
+    const questionAttachment = this.items.filter(
+      (item) => item.id.toString() === questionId,
+    )
+
+    this.items = questionAttachment
+  }
+
   async findManyByQuestionId(
     questionId: string,
   ): Promise<QuestionAttachment[]> {

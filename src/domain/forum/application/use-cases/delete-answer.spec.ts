@@ -1,38 +1,38 @@
 import { InMemoryAnswerRepository } from 'test/repositories/in-memory-answer-repositories'
-import { UniqueEntityId } from '@/core/entities/unique-entity-id'
-import { EditAnswerUseCase } from './edit-answer'
 import { makeAnswer } from 'test/factories/make-answer'
+import { DeleteAnswerUseCase } from './delete-answer'
+import { UniqueEntityId } from '@/core/entities/unique-entity-id'
 import { NotAllowedError } from './errors/not-allowed-error'
 import { ResourceNotFoundError } from './errors/resource-not-found-error'
 import { InMemoryAnswerAttachmentsRepository } from 'test/repositories/in-memory-answer-attachments-repository'
 import { makeAnswerAttachments } from 'test/factories/make-answer-attachments'
-import { AnswerAttachmentList } from '../../enterprise/entities/answer-attachment-list'
 
 let inMemoryAnswerRepository: InMemoryAnswerRepository
 let inMemoryAnswerAttachmentsRepository: InMemoryAnswerAttachmentsRepository
-let sut: EditAnswerUseCase
+let sut: DeleteAnswerUseCase
 
-describe('Edit Answer', () => {
+describe('Delete Answer', () => {
   beforeEach(() => {
     inMemoryAnswerAttachmentsRepository =
       new InMemoryAnswerAttachmentsRepository()
+
     inMemoryAnswerRepository = new InMemoryAnswerRepository(
       inMemoryAnswerAttachmentsRepository,
     )
-    sut = new EditAnswerUseCase(
-      inMemoryAnswerRepository,
-      inMemoryAnswerAttachmentsRepository,
-    )
+    sut = new DeleteAnswerUseCase(inMemoryAnswerRepository)
   })
 
-  it('should be able to Edit a answer', async () => {
+  it('should be able to delete a answer', async () => {
     const createAnswer = makeAnswer(
       {
         authorId: new UniqueEntityId('author-1'),
-        attachments: new AnswerAttachmentList(),
       },
       new UniqueEntityId('answer-1'),
     )
+    const createAnswerTwo = makeAnswer({}, new UniqueEntityId('answer-2'))
+
+    await inMemoryAnswerRepository.create(createAnswer)
+    await inMemoryAnswerRepository.create(createAnswerTwo)
 
     inMemoryAnswerAttachmentsRepository.items.push(
       makeAnswerAttachments({
@@ -45,58 +45,51 @@ describe('Edit Answer', () => {
       }),
     )
 
-    await inMemoryAnswerRepository.create(createAnswer)
-
     await sut.execute({
-      authorId: 'author-1',
-      content: 'new content',
       answerId: 'answer-1',
-      attachmentsIds: ['1', '3'],
+      authorId: 'author-1',
     })
 
-    expect(inMemoryAnswerRepository.items[0]).toMatchObject({
-      content: 'new content',
-    })
+    expect(inMemoryAnswerRepository.items).toHaveLength(1)
+    expect(inMemoryAnswerRepository.items[0].id.toString()).toBe(
+      createAnswerTwo.id.toString(),
+    )
+    expect(await inMemoryAnswerRepository.findById('answer-1')).toBe(null)
 
-    expect(
-      inMemoryAnswerRepository.items[0].attachments.currentItems,
-    ).toHaveLength(2)
-
-    expect(inMemoryAnswerRepository.items[0].attachments.currentItems).toEqual([
-      expect.objectContaining({ attachmentId: new UniqueEntityId('1') }),
-      expect.objectContaining({ attachmentId: new UniqueEntityId('3') }),
-    ])
+    expect(inMemoryAnswerAttachmentsRepository.items).toHaveLength(0)
   })
 
-  it('should not be able to edit a answer from another user', async () => {
+  it('should not be able to delete a answer from another user', async () => {
     const createAnswer = makeAnswer(
       {
         authorId: new UniqueEntityId('author-1'),
       },
       new UniqueEntityId('answer-1'),
     )
+
+    const createAnswerTwo = makeAnswer({}, new UniqueEntityId('answer-2'))
+
     await inMemoryAnswerRepository.create(createAnswer)
+    await inMemoryAnswerRepository.create(createAnswerTwo)
 
     const result = await sut.execute({
-      authorId: 'author-2',
-      content: 'new content',
       answerId: 'answer-1',
-      attachmentsIds: [],
+      authorId: 'author-2',
     })
 
-    expect(result.isLeft()).toBe(true)
+    expect(result.isLeft()).toBeTruthy()
     expect(result.value).toBeInstanceOf(NotAllowedError)
+
+    expect(inMemoryAnswerRepository.items).toHaveLength(2)
   })
 
-  it('should not be able to edit a answer not exist', async () => {
+  it('should not be able to delete a answer not exist', async () => {
     const result = await sut.execute({
-      authorId: 'author-2',
-      content: 'new content',
       answerId: 'answer-1',
-      attachmentsIds: [],
+      authorId: 'author-2',
     })
 
-    expect(result.isLeft()).toBe(true)
+    expect(result.isLeft()).toBeTruthy()
     expect(result.value).toBeInstanceOf(ResourceNotFoundError)
   })
 })

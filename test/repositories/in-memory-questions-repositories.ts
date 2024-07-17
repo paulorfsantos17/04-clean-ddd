@@ -53,12 +53,12 @@ export class InMemoryQuestionsRepository implements QuestionRepository {
   }
 
   async delete(question: Question): Promise<void> {
-    this.questionAttachmentsRepository.deleteManyByQuestionId(
-      question.id.toString(),
-    )
-
     this.items = this.items.filter(
       (item) => item.id.toString() !== question.id.toString(),
+    )
+
+    this.questionAttachmentsRepository.deleteManyByQuestionId(
+      question.id.toString(),
     )
   }
 }

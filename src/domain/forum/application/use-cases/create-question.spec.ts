@@ -27,10 +27,13 @@ describe('create a question', () => {
     })
 
     expect(value?.question.id).toBeTruthy()
+
     expect(inMemoryQuestionsRepository.items[0].id).toEqual(value?.question.id)
+
     expect(
       inMemoryQuestionsRepository.items[0].attachments.currentItems,
     ).toHaveLength(2)
+
     expect(
       inMemoryQuestionsRepository.items[0].attachments.currentItems,
     ).toEqual([

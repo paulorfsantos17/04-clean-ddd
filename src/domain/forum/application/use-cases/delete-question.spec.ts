@@ -56,8 +56,6 @@ describe('Delete Question', () => {
     )
     expect(await inMemoryQuestionsRepository.findById('question-1')).toBe(null)
 
-    console.log(inMemoryQuestionAttachmentsRepository.items)
-
     expect(inMemoryQuestionAttachmentsRepository.items).toHaveLength(0)
   })
 

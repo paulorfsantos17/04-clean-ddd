@@ -1,4 +1,21 @@
+import { DomainEvent } from '@/events/domain-event'
 import { Entity } from './entity'
+import { DomainEvents } from '@/events/domain-events'
 
 // eslint-disable-next-line prettier/prettier
-export abstract class AggregateRoot<Props> extends Entity<Props> { }
+export abstract class AggregateRoot<Props> extends Entity<Props> {
+  private _domainEvents: DomainEvent[] = []
+
+  get domainEvents(): DomainEvent[] {
+    return this._domainEvents
+  }
+
+  protected addDomainEvent(domainEvent: DomainEvent): void {
+    this._domainEvents.push(domainEvent)
+    DomainEvents.markAggregateForDispatch(this)
+  }
+
+  public clearEvents(): void {
+    this._domainEvents = []
+  }
+}

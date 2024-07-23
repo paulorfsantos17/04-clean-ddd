@@ -1,6 +1,6 @@
-import { DomainEvent } from '@/events/domain-event'
+import { DomainEvent } from '@/core/events/domain-event'
 import { Entity } from './entity'
-import { DomainEvents } from '@/events/domain-events'
+import { DomainEvents } from '@/core/events/domain-events'
 
 // eslint-disable-next-line prettier/prettier
 export abstract class AggregateRoot<Props> extends Entity<Props> {

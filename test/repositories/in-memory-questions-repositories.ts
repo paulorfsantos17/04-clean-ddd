@@ -2,6 +2,7 @@ import { PaginationParams } from '@/core/repositories/pagination-params'
 import { QuestionAttachmentsRepository } from '@/domain/forum/application/repositories/question-attachments-repository'
 import { QuestionRepository } from '@/domain/forum/application/repositories/question-repository'
 import { Question } from '@/domain/forum/enterprise/entities/question'
+import { DomainEvents } from '@/core/events/domain-events'
 
 export class InMemoryQuestionsRepository implements QuestionRepository {
   public items: Question[] = []
@@ -24,6 +25,8 @@ export class InMemoryQuestionsRepository implements QuestionRepository {
     const questionItem = this.items.findIndex(
       (item) => item.id.toString() === question.id.toString(),
     )
+
+    DomainEvents.dispatchEventsForAggregate(question.id)
 
     this.items[questionItem] = question
   }

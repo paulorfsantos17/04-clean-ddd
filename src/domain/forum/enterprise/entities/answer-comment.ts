@@ -1,5 +1,5 @@
 import { UniqueEntityId } from '@/core/entities/unique-entity-id'
-import { Optional } from '@/types/optional'
+import { Optional } from '@/core/types/optional'
 import { Comment, CommentProps } from './commet'
 
 export interface AnswerCommentProps extends CommentProps {

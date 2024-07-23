@@ -1,6 +1,6 @@
 import { AggregateRoot } from '@/core/entities/aggregate-root'
 import { UniqueEntityId } from '@/core/entities/unique-entity-id'
-import { Optional } from '@/types/optional'
+import { Optional } from '@/core/types/optional'
 import { AnswerAttachmentList } from './answer-attachment-list'
 import { AnswerCreatedEvent } from '../events/answer-created-event'
 
